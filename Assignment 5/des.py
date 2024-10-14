@@ -2,7 +2,6 @@ from Crypto.Cipher import DES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
 
-
 def des_encrypt(plain_text, key):
     """
     Encrypt the plain text using DES algorithm.
@@ -14,11 +13,21 @@ def des_encrypt(plain_text, key):
     Returns:
     bytes: The encrypted cipher text.
     """
+    print(f"\n[Encrypt] Plain Text: {plain_text}")
+    
+    # Initialize the DES cipher in ECB mode
     cipher = DES.new(key, DES.MODE_ECB)
+    print(f"[Encrypt] DES Cipher initialized with ECB mode and key: {key.hex()}")
+    
+    # Padding the plain text to match DES block size (8 bytes)
     padded_text = pad(plain_text.encode(), DES.block_size)
+    print(f"[Encrypt] Padded Plain Text (in hexadecimal): {padded_text.hex()}")
+    
+    # Encrypting the padded text
     encrypted_text = cipher.encrypt(padded_text)
+    print(f"[Encrypt] Encrypted Text (in hexadecimal): {encrypted_text.hex()}")
+    
     return encrypted_text
-
 
 def des_decrypt(cipher_text, key):
     """
@@ -31,10 +40,21 @@ def des_decrypt(cipher_text, key):
     Returns:
     str: The decrypted plain text.
     """
+    print(f"\n[Decrypt] Cipher Text to Decrypt (in hexadecimal): {cipher_text.hex()}")
+    
+    # Initialize the DES cipher in ECB mode for decryption
     cipher = DES.new(key, DES.MODE_ECB)
-    decrypted_text = unpad(cipher.decrypt(cipher_text), DES.block_size)
+    print(f"[Decrypt] DES Cipher initialized with ECB mode and key: {key.hex()}")
+    
+    # Decrypt the ciphertext
+    decrypted_padded_text = cipher.decrypt(cipher_text)
+    print(f"[Decrypt] Decrypted Padded Text (in hexadecimal): {decrypted_padded_text.hex()}")
+    
+    # Unpad the decrypted text
+    decrypted_text = unpad(decrypted_padded_text, DES.block_size)
+    print(f"[Decrypt] Decrypted Text (unpadded): {decrypted_text.decode()}")
+    
     return decrypted_text.decode()
-
 
 def main():
     """
@@ -51,12 +71,12 @@ def main():
     
     # Encrypt the plaintext
     encrypted_text = des_encrypt(plain_text, key)
-    print(f"\nEncrypted Text (in hexadecimal): {encrypted_text.hex()}")
     
     # Decrypt the ciphertext
     decrypted_text = des_decrypt(encrypted_text, key)
-    print(f"\nDecrypted Text: {decrypted_text}")
-
+    
+    # Final verification of decrypted text
+    print(f"\nDecrypted Text matches Original Plain Text: {decrypted_text == plain_text}")
 
 if __name__ == "__main__":
     main()
