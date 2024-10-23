@@ -4,24 +4,28 @@ import random
 
 def generate_private_key(p):
     """Generate a private key."""
-    return random.randint(2, p-2)
+    private_key = random.randint(2, p - 2)
+    print(f"Generated Server's Private Key: {private_key}")
+    return private_key
 
 
 def calculate_public_key(g, private_key, p):
     """Calculate the public key."""
-    return pow(g, private_key, p)
+    public_key = pow(g, private_key, p)
+    print(f"Calculated Server's Public Key: {public_key}")
+    return public_key
 
 
 def calculate_shared_secret(public_key, private_key, p):
     """Calculate the shared secret."""
-    return pow(public_key, private_key, p)
+    shared_secret = pow(public_key, private_key, p)
+    return shared_secret
 
 
 def start_server(host='localhost', port=5000):
-    # p = 23
-    # g = 5
-    p = 104729  # Shared prime number --> 104729 (which is the 10000th prime number)
-    g = 2   # Shared base --> Primitive Root g: 2
+    # Take p and g as user input
+    p = int(input("Enter a prime number (p): "))
+    g = int(input("Enter a primitive root (g): "))
 
     # Generate server's private and public keys
     private_key = generate_private_key(p)
@@ -53,3 +57,9 @@ def start_server(host='localhost', port=5000):
 
 if __name__ == "__main__":
     start_server()
+
+
+# For 
+# p: 1014273607262027361
+# For 
+# g: 2
