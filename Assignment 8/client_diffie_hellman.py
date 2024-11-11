@@ -1,3 +1,5 @@
+
+
 import socket
 import random
 
@@ -19,21 +21,19 @@ def calculate_shared_secret(public_key, private_key, p):
     return shared_secret
 
 def start_client(server_host='localhost', server_port=5000):
-    # Take p and g as user input
-    p = int(input("Enter a prime number (p): "))
-    g = int(input("Enter a primitive root (g): "))
-
-    # Generate client's private and public keys
-    private_key = generate_private_key(p)
-    public_key = calculate_public_key(g, private_key, p)
-
     # Create client socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((server_host, server_port))
 
-    # Receive the server's public key
-    server_public_key = int(client_socket.recv(1024).decode())
+    # Receive the server's public key, p, and g values
+    data = client_socket.recv(1024).decode()
+    server_public_key, p, g = map(int, data.split(','))
     print(f"\nReceived Server's Public Key: {server_public_key}")
+    print(f"Using p: {p} and g: {g} as provided by the server")
+
+    # Generate client's private and public keys
+    private_key = generate_private_key(p)
+    public_key = calculate_public_key(g, private_key, p)
 
     # Send the client's public key to the server
     client_socket.sendall(str(public_key).encode())
