@@ -1,12 +1,24 @@
+def find_position(matrix, char):
+    """
+    Find the row and column of a character in the Playfair matrix.
+
+    Parameters:
+    matrix (list): The 5x5 matrix for the Playfair cipher.
+    char (str): The character to find in the matrix.
+
+    Returns:
+    tuple: The row and column of the character in the matrix.
+    """
+    for row in range(5):
+        for col in range(5):
+            if matrix[row][col] == char:
+                return row, col
+    return None
+
+
 def generate_playfair_matrix(key):
     """
     Generate a 5x5 matrix for the Playfair cipher based on the provided key.
-
-    Parameters:
-    key (str): The key to generate the matrix.
-
-    Returns:
-    list: A 5x5 matrix for the Playfair cipher.
     """
     key = key.upper().replace("J", "I")
     matrix = []
@@ -33,34 +45,9 @@ def generate_playfair_matrix(key):
     return [matrix[i:i + 5] for i in range(0, 25, 5)]
 
 
-def find_position(matrix, char):
-    """
-    Find the row and column of a character in the Playfair matrix.
-
-    Parameters:
-    matrix (list): The 5x5 matrix for the Playfair cipher.
-    char (str): The character to find in the matrix.
-
-    Returns:
-    tuple: The row and column of the character in the matrix.
-    """
-    for row in range(5):
-        for col in range(5):
-            if matrix[row][col] == char:
-                return row, col
-    return None
-
-
 def playfair_encrypt(text, key):
     """
     Encrypt the plain text using the Playfair cipher.
-
-    Parameters:
-    text (str): The input text to be encrypted.
-    key (str): The key for the Playfair cipher.
-
-    Returns:
-    str: The encrypted text.
     """
     text = text.upper().replace("J", "I").replace(" ", "")
     if len(text) % 2 != 0:
@@ -101,13 +88,6 @@ def playfair_encrypt(text, key):
 def playfair_decrypt(text, key):
     """
     Decrypt the encrypted text using the Playfair cipher.
-
-    Parameters:
-    text (str): The input text to be decrypted.
-    key (str): The key for the Playfair cipher.
-
-    Returns:
-    str: The decrypted text.
     """
     text = text.upper().replace("J", "I").replace(" ", "")
     matrix = generate_playfair_matrix(key)
@@ -166,3 +146,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Enter the plain text: MEETMEATNOON
+# Enter the key: MONARCHY
+

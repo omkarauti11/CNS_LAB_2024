@@ -114,3 +114,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# Enter the plain text: OMKARAUTI
+# Enter the row key as a sequence of numbers (e.g., 2 0 1): 0 2 1
+# Enter the column key as a sequence of numbers (e.g., 1 0 2): 0 2 1

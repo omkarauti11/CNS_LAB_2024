@@ -11,13 +11,12 @@ def mod_inverse(matrix, modulus):
     Returns:
     numpy.ndarray: The modular inverse of the matrix.
     """
-    det = int(np.round(np.linalg.det(matrix)))
-    det_inv = pow(det, -1, modulus)
-    matrix_modulus_inv = (
-        det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
-    )
+    det = int(np.round(np.linalg.det(matrix)))  # Determinant of the matrix
+    if det == 0:
+        raise ValueError("Matrix is not invertible.")
+    det_inv = pow(det, -1, modulus)  # Modular inverse of determinant
+    matrix_modulus_inv = (det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus)  # Modular inverse of the matrix
     return matrix_modulus_inv
-
 
 def hill_encrypt(text, key):
     """
@@ -30,15 +29,19 @@ def hill_encrypt(text, key):
     Returns:
     str: The encrypted text.
     """
-    size = int(len(key) ** 0.5)
+    size = int(len(key) ** 0.5)  # Size of the key matrix (2x2 or 3x3, etc.)
     key_matrix = np.array(key).reshape(size, size)
-    modulus = 26
-    text_vector = np.array([ord(char) - ord('A') for char in text])
-    text_vector = text_vector.reshape(-1, size).T
-    encrypted_vector = (np.dot(key_matrix, text_vector) % modulus).T
-    encrypted_text = ''.join(chr(num + ord('A')) for num in encrypted_vector.flatten())
+    modulus = 26  # Use modulo 26 for the alphabet
+    # Pad text if necessary to match the key matrix size
+    if len(text) % size != 0:
+        text = text.ljust(len(text) + (size - len(text) % size), 'X')  # Pad with 'X'
+    
+    text_vector = np.array([ord(char) - ord('A') for char in text])  # Convert text to numerical vector
+    text_vector = text_vector.reshape(-1, size).T  # Reshape into column vectors
+    encrypted_vector = (np.dot(key_matrix, text_vector) % modulus).T  # Matrix multiplication modulo 26
+    
+    encrypted_text = ''.join(chr(num + ord('A')) for num in encrypted_vector.flatten())  # Convert back to letters
     return encrypted_text
-
 
 def hill_decrypt(text, key):
     """
@@ -51,16 +54,17 @@ def hill_decrypt(text, key):
     Returns:
     str: The decrypted text.
     """
-    size = int(len(key) ** 0.5)
+    size = int(len(key) ** 0.5)  # Size of the key matrix (2x2 or 3x3, etc.)
     key_matrix = np.array(key).reshape(size, size)
-    modulus = 26
-    key_matrix_inv = mod_inverse(key_matrix, modulus)
-    text_vector = np.array([ord(char) - ord('A') for char in text])
-    text_vector = text_vector.reshape(-1, size).T
-    decrypted_vector = (np.dot(key_matrix_inv, text_vector) % modulus).T
-    decrypted_text = ''.join(chr(int(num) + ord('A')) for num in decrypted_vector.flatten())
+    modulus = 26  # Use modulo 26 for the alphabet
+    key_matrix_inv = mod_inverse(key_matrix, modulus)  # Compute the modular inverse of the key matrix
+    
+    text_vector = np.array([ord(char) - ord('A') for char in text])  # Convert text to numerical vector
+    text_vector = text_vector.reshape(-1, size).T  # Reshape into column vectors
+    decrypted_vector = (np.dot(key_matrix_inv, text_vector) % modulus).T  # Matrix multiplication modulo 26
+    
+    decrypted_text = ''.join(chr(int(num) + ord('A')) for num in decrypted_vector.flatten())  # Convert back to letters
     return decrypted_text
-
 
 def main():
     """
@@ -75,22 +79,15 @@ def main():
 
         if choice == '1':
             plain_text = input("\nEnter the plain text (length multiple of key matrix size): ").upper().replace(" ", "")
-            key = input("Enter the key matrix (comma-separated integers, e.g., '2,4,5,9' for 2x2 matrix): ")
+            key = input("Enter the key matrix (comma-separated integers, e.g., '1,2,3,0,1,4,5,6,0' for 3x3 matrix): ")
             key_matrix = list(map(int, key.split(',')))
             size = int(len(key_matrix) ** 0.5)
-            if len(plain_text) % size != 0:
-                print("Error: The length of the plain text must be a multiple of the key matrix size.")
-                continue
             encrypted_text = hill_encrypt(plain_text, key_matrix)
             print(f"\nEncrypted Text: {encrypted_text}")
         elif choice == '2':
             encrypted_text = input("\nEnter the encrypted text: ").upper().replace(" ", "")
-            key = input("Enter the key matrix (comma-separated integers, e.g., '2,4,5,9' for 2x2 matrix): ")
+            key = input("Enter the key matrix (comma-separated integers, e.g., '1,2,3,0,1,4,5,6,0' for 3x3 matrix): ")
             key_matrix = list(map(int, key.split(',')))
-            size = int(len(key_matrix) ** 0.5)
-            if len(encrypted_text) % size != 0:
-                print("Error: The length of the encrypted text must be a multiple of the key matrix size.")
-                continue
             decrypted_text = hill_decrypt(encrypted_text, key_matrix)
             print(f"\nDecrypted Text: {decrypted_text}")
         elif choice == '3':
@@ -99,6 +96,11 @@ def main():
         else:
             print("Invalid choice. Please try again.")
 
-
 if __name__ == "__main__":
     main()
+
+
+
+# Enter the plain text (length multiple of key matrix size): OMKARAUTI
+# DON'T CHANGE KEY MATRIX SEQUENCE AS KEY MATRIX NEEDS TO BE INVERTIBLE
+# Enter the key matrix (comma-separated integers, e.g., '1,2,3,0,1,4,5,6,0' for 3x3 matrix): 1,2,3,0,1,4,5,6,0

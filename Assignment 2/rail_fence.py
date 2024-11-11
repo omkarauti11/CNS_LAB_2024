@@ -98,3 +98,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Enter the plain text: OMKARAUTI
+# Enter the number of rails: 2
